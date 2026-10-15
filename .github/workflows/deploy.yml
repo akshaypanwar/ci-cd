@@ -37,6 +37,16 @@ jobs:
       - name: Push Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
 
+      - name: Configure AWS Workflow
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESSKEY }}
+          aws-region: ap-southeast-2
+
+      - name: Upload to S3
+        run: aws s3 cp target/panwar-0.0.1-SNAPSHOT.jar s3://amazon-full-bucket/
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.5
         with:
